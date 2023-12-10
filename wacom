@@ -1,0 +1,16 @@
+#!/bin/bash
+#xsetwacom list
+#xsetwacom set 20 Rotate half
+#xsetwacom set 20 Area 0 0 15200 8550
+#xsetwacom set 20 MapToOutput 1920x1080+0+900
+
+id=$(xsetwacom list | awk '{print $9}' | head -1)
+
+if [ "$id" != "" ]; then
+	xsetwacom set $id Rotate half
+	xsetwacom set $id Area 0 0 15200 8500
+	xsetwacom set $id MapToOutput 1920x1080+0+900
+	echo "Configuration aplied succesfully"
+else
+	echo "Device not connected"
+fi

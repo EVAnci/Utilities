@@ -1,0 +1,50 @@
+#!/bin/zsh
+
+###mkdir transcoded; for i in *.mp4; do ffmpeg -i "$i" -vcodec mjpeg -q:v 2 -acodec pcm_s16be -q:a 0 -f mov "transcoded/${i%.*}.mov"; done
+
+# Funcion para convertir archivos en el directorio actual
+convert_files() {
+  local dir=$1
+  cd $dir
+  mkdir -p transcoded
+  for file in *.mp4; do
+    ffmpeg -i "$file" -vcodec mjpeg -q:v 2 -acodec pcm_s16be -q:a 0 -f mov "transcoded/${file%.*}.mov"
+  done
+}
+
+# Funcion recursiva para procesar subdirectorios
+process_directories() {
+  local work_dir="$1"
+  for dir in "$work_dir"/*; do
+    echo "Entrando al directorio: $dir"
+    if [ -d "$dir" ]; then
+      echo "Procesando directorio: $dir"
+      convert_files $dir
+    fi
+  done
+
+}
+
+red="\e[0;31m"
+blue="\e[0;34m"
+green="\e[0;32m"
+cyan="\e[0;36m"
+default="\e[0m"
+
+# Verifica el parametro del directorio
+if [ $# -eq 0 ]; then
+  echo "${red}Uso: ${default}davinci_encode ${green}<directorio>${default}"
+  exit 1
+else
+  dir=$1
+  work_dir="$(readlink -f "$dir")"
+  echo "Procesando directorio -> $work_dir"
+fi
+
+# Verifica la existencia del directorio
+if [ ! -d "$work_dir" ]; then
+  echo "${red}El directorio especificado no existe.${default}"
+  exit 1
+fi
+
+process_directories "$work_dir"
