@@ -16,13 +16,11 @@ convert_files() {
 process_directories() {
   local work_dir="$1"
   for dir in "$work_dir"/*; do
-    echo "Entrando al directorio: $dir"
-    if [ -d "$dir" ]; then
-      echo "Procesando directorio: $dir"
+    if [ -d "$dir" ] || [[ "$dir" == *.mp4 ]]; then
+      echo "Procesando directorio o archivo: $dir"
       convert_files $dir
     fi
   done
-
 }
 
 red="\e[0;31m"
@@ -38,7 +36,7 @@ if [ $# -eq 0 ]; then
 else
   dir=$1
   work_dir="$(readlink -f "$dir")"
-  echo "Procesando directorio -> $work_dir"
+  echo "Leyendo directorio -> $work_dir"
 fi
 
 # Verifica la existencia del directorio
